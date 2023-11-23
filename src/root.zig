@@ -21,6 +21,7 @@ pub const Entry = struct {
     }
 };
 
+/// Returns null if given a comment. Attempts to parse `line` otherwise.
 pub fn parseLine(line: []const u8, allocator: std.mem.Allocator) !?Entry {
     if (line[0] == '#')
         return null;
