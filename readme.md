@@ -1,6 +1,6 @@
 # CEDICT-Parse
 
-A work in progress library for parsing CEDICT data.
+A small zig library for parsing CEDICT data.
 
 ## Barebones example
 
