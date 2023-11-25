@@ -15,6 +15,10 @@ pub fn build(b: *std.Build) void {
     // set a preferred release mode, allowing the user to decide how to optimize.
     const optimize = b.standardOptimizeOption(.{});
 
+    const cedict_module = b.addModule("cedict-parse", .{
+        .source_file = .{ .path = "src/root.zig" },
+    });
+
     const lib = b.addStaticLibrary(.{
         .name = "cedict-parse",
         // In this case the main source file is merely a path, however, in more
@@ -45,6 +49,8 @@ pub fn build(b: *std.Build) void {
         .target = target,
         .optimize = optimize,
     });
+
+    lib_unit_tests.addModule("cedict-parse", cedict_module);
 
     const run_lib_unit_tests = b.addRunArtifact(lib_unit_tests);
     // Similar to creating the run step earlier, this exposes a `test` step to

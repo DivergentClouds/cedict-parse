@@ -1,6 +1,6 @@
 const std = @import("std");
 const testing = std.testing;
-const root = @import("root.zig");
+const cedict = @import("cedict-parse");
 
 test "toDiacriticSyllable" {
     const allocator = testing.allocator;
@@ -50,7 +50,7 @@ test "toDiacriticSyllable" {
     };
 
     for (syllables) |syllable| {
-        const with_diacritics = try root.toDiacriticSingle(syllable, allocator);
+        const with_diacritics = try cedict.toDiacriticSingle(syllable, allocator);
         defer allocator.free(with_diacritics);
         try writer.print("{s} -> {s}\n", .{
             syllable,
@@ -109,7 +109,7 @@ test "parseLine" {
 
     const line = "麵 面 [mian4] /flour/noodles/(of food) soft (not crunchy)/(slang) (of a person) ineffectual/spineless/";
 
-    var entry = try root.parseLine(line, allocator) orelse
+    var entry = try cedict.parseLine(line, allocator) orelse
         return error.UnexpectedComment;
     defer entry.deinit(allocator);
 
@@ -152,7 +152,7 @@ test "Entry.toDiacriticForm" {
 
     const line = "主意 主意 [zhu3 yi5] /plan/idea/decision/CL:個|个[ge4]/Beijing pr. [zhu2 yi5]/";
 
-    var entry = try root.parseLine(line, allocator) orelse
+    var entry = try cedict.parseLine(line, allocator) orelse
         return error.UnexpectedComment;
     defer entry.deinit(allocator);
 
