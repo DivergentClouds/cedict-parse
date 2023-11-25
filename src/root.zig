@@ -1,5 +1,6 @@
 const std = @import("std");
 
+/// A parsed dictionary entry.
 pub const Entry = struct {
     traditional: []u8,
     simplified: []u8,
@@ -8,7 +9,7 @@ pub const Entry = struct {
 
     definitions: [][]u8,
 
-    /// The passed allocator must be the same one used for creating the `Entry`
+    /// The passed allocator must be the same one used for creating the `Entry`.
     pub fn deinit(self: *Entry, allocator: std.mem.Allocator) void {
         allocator.free(self.traditional);
         allocator.free(self.simplified);
@@ -20,6 +21,8 @@ pub const Entry = struct {
         allocator.free(self.definitions);
     }
 
+    /// Convert all pinyin in `self` to use diacritics for tones rather than
+    /// numbers.
     pub fn toDiacriticForm(self: *Entry, allocator: std.mem.Allocator) !void {
         const new_pinyin = try toDiacriticSyllables(self.pinyin, allocator);
         allocator.free(self.pinyin);
@@ -73,7 +76,7 @@ pub const Entry = struct {
 };
 
 /// Returns null if given a comment. Attempts to parse `line` otherwise.
-/// Call deinit on result when done
+/// Call `deinit` on result when done.
 pub fn parseLine(line: []const u8, allocator: std.mem.Allocator) !?Entry {
     if (line[0] == '#')
         return null;
@@ -143,7 +146,7 @@ pub fn toDiacriticSyllables(pinyin: []const u8, allocator: std.mem.Allocator) ![
     return try pinyin_list.toOwnedSlice();
 }
 
-/// Turn a pinyin syllable written with numbers to be written with diacritics
+/// Turn a pinyin syllable written with numbers to be written with diacritics.
 /// Caller owns both `pinyin` and returned value.
 pub fn toDiacriticSingle(pinyin: []const u8, allocator: std.mem.Allocator) ![]u8 {
     var pinyin_list = std.ArrayList(u8).init(allocator);
