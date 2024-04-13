@@ -16,7 +16,9 @@ pub fn build(b: *std.Build) void {
     const optimize = b.standardOptimizeOption(.{});
 
     const cedict_module = b.addModule("cedict-parse", .{
-        .source_file = .{ .path = "src/root.zig" },
+        .root_source_file = .{
+            .path = "src/root.zig",
+        },
     });
 
     const lib = b.addStaticLibrary(.{
@@ -39,7 +41,7 @@ pub fn build(b: *std.Build) void {
         .install_subdir = "docs",
     });
 
-    const docstep = b.step("docs", "generate docs");
+    const docstep = b.step("docs", "Generate docs");
     docstep.dependOn(&install_docs.step);
 
     // Creates a step for unit testing. This only builds the test executable
@@ -50,7 +52,7 @@ pub fn build(b: *std.Build) void {
         .optimize = optimize,
     });
 
-    lib_unit_tests.addModule("cedict-parse", cedict_module);
+    lib_unit_tests.root_module.addImport("cedict-parse", cedict_module);
 
     const run_lib_unit_tests = b.addRunArtifact(lib_unit_tests);
     // Similar to creating the run step earlier, this exposes a `test` step to
