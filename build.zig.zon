@@ -1,6 +1,7 @@
 .{
-    .name = "cedict-parse",
-    .version = "0.2.0",
+    .name = .cedict_parse,
+    .version = "0.2.1",
+    .fingerprint = 0x823a4b2f38a9347b,
 
     .paths = .{
         "build.zig",
