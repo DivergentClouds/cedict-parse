@@ -7,7 +7,7 @@ pub const Entry = struct {
 
     pinyin: []u8,
 
-    definitions: [][]u8,
+    definitions: [][]const u8,
 
     /// The passed allocator must be the same one used for creating the `Entry`.
     pub fn deinit(self: *Entry, allocator: std.mem.Allocator) void {
@@ -64,7 +64,7 @@ pub const Entry = struct {
 
                 try definition_list.append(']');
 
-                partial_definition = @constCast(pinyin_tokens.rest());
+                partial_definition = pinyin_tokens.rest();
             }
 
             try definition_list.appendSlice(partial_definition);
@@ -76,7 +76,7 @@ pub const Entry = struct {
 };
 
 /// Returns null if given a comment. Attempts to parse `line` otherwise.
-/// Call `deinit` on result when done.
+/// Caller owns the result.
 pub fn parseLine(line: []const u8, allocator: std.mem.Allocator) !?Entry {
     if (line[0] == '#')
         return null;
@@ -110,7 +110,7 @@ pub fn parseLine(line: []const u8, allocator: std.mem.Allocator) !?Entry {
     // skip trailing space
     const definitions = line_tokens.rest()[1..];
 
-    var definitions_list = std.ArrayList([]u8).init(allocator);
+    var definitions_list = std.ArrayList([]const u8).init(allocator);
     defer definitions_list.deinit();
     errdefer for (definitions_list.items) |item| {
         allocator.free(item);
@@ -126,8 +126,7 @@ pub fn parseLine(line: []const u8, allocator: std.mem.Allocator) !?Entry {
 }
 
 /// Turn a string containing multiple space-seperated pinyin syllables written
-/// with numbers to written with diacritics. Caller owns both `pinyin` and
-/// returned value.
+/// with numbers to written with diacritics. Caller owns the returned value.
 pub fn toDiacriticSyllables(pinyin: []const u8, allocator: std.mem.Allocator) ![]u8 {
     var syllables = std.mem.tokenizeScalar(u8, pinyin, ' ');
 
